@@ -25,6 +25,8 @@ const MODEL_KEY = "pulse3d-model-listings";
 const CONTACT_EMAIL = "kumaraarush022@gmail.com";
 const PURCHASED_KEY = "pulse3d-purchased-designs";
 const USER_KEY = "pulse3d-current-user";
+const API_BASE = window.location.protocol === "file:" ? "http://127.0.0.1:8000" : "";
+const resolvePageUrl = (path) => (path.startsWith("http") ? path : `${API_BASE}${path}`);
 let currentUser = null;
 let cachedModels = [];
 
@@ -98,8 +100,9 @@ if (year) {
 }
 
 const api = async (path, options = {}) => {
-  const response = await fetch(path, {
-    credentials: "same-origin",
+  const url = path.startsWith("http") ? path : `${API_BASE}${path}`;
+  const response = await fetch(url, {
+    credentials: "include",
     headers: options.body instanceof FormData ? {} : { "Content-Type": "application/json" },
     ...options,
   });
@@ -108,7 +111,13 @@ const api = async (path, options = {}) => {
   let data;
 
   if (contentType.includes("application/json")) {
-    data = await response.json();
+    const text = await response.text();
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch (error) {
+      console.error("Invalid JSON response from", url, text);
+      data = text;
+    }
   } else {
     data = await response.text();
   }
@@ -376,7 +385,7 @@ const handleLogin = (form, button, statusElement) => {
         currentUser = user;
         saveCurrentUser(currentUser);
         updateProfileUI();
-        window.location.replace(user.role === "admin" ? "admin.html" : "index.html");
+        window.location.replace(resolvePageUrl(user.role === "admin" ? "admin.html" : "index.html"));
       })
       .catch((error) => {
         if (statusElement) {
@@ -432,7 +441,7 @@ const handleRegister = (form, statusElement) => {
         if (statusElement) {
           statusElement.textContent = "Account created. You can now log in.";
         }
-        window.location.href = "login.html";
+        window.location.href = resolvePageUrl("login.html");
       })
       .catch((error) => {
         if (statusElement) {
