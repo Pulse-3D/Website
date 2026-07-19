@@ -473,6 +473,56 @@ h3 {
   box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.12);
 }
 
+.admin-session {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-session .copy-status {
+  width: 100%;
+  margin: 0;
+}
+
+.auth-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  align-items: start;
+}
+
+.auth-card {
+  display: grid;
+  gap: 16px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: var(--shadow);
+}
+
+.auth-card label {
+  display: grid;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.auth-card input {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  font: inherit;
+  background: #ffffff;
+  outline: none;
+}
+
 .upload-panel {
   display: grid;
   grid-template-columns: minmax(0, 0.7fr) minmax(320px, 1fr);
@@ -627,6 +677,7 @@ h3 {
   .upload-panel,
   .admin-panel,
   .admin-form,
+  .auth-grid,
   .shop-heading,
   .listing-grid {
     grid-template-columns: 1fr;

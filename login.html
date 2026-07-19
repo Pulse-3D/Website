@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pulse 3D Login</title>
+  <meta
+    name="description"
+    content="Public and admin login for Pulse 3D."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="index.html">Pulse 3D</a>
+      <div class="nav-links">
+        <a href="models.html">Shop</a>
+        <a href="admin.html">Admin</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <p class="eyebrow">Account access</p>
+      <h1>Log in to Pulse 3D.</h1>
+      <p class="hero-text">
+        Public users can buy designs. Admin users can upload and manage the shop.
+      </p>
+    </section>
+
+    <section class="section auth-grid" aria-label="Login forms">
+      <form id="public-login-form" class="auth-card" data-role="public">
+        <p class="eyebrow">Public</p>
+        <h2>Customer login</h2>
+        <label>
+          Email
+          <input name="email" type="email" placeholder="you@example.com" required />
+        </label>
+        <label>
+          Password
+          <input name="password" type="password" placeholder="8+ characters" required />
+        </label>
+        <button class="button primary" type="submit">Log in</button>
+        <button class="button secondary" type="button" id="register-button">Create public account</button>
+        <p id="public-login-status" class="copy-status" aria-live="polite"></p>
+      </form>
+
+      <form id="admin-login-form" class="auth-card" data-role="admin">
+        <p class="eyebrow">Admin</p>
+        <h2>Owner login</h2>
+        <label>
+          Email
+          <input name="email" type="email" placeholder="admin@pulse3d.local" required />
+        </label>
+        <label>
+          Password
+          <input name="password" type="password" placeholder="Admin password" required />
+        </label>
+        <button class="button primary" type="submit">Log in as admin</button>
+        <p id="admin-login-status" class="copy-status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; <span id="year"></span> Pulse 3D. All rights reserved.</p>
+    <p class="visitor-count">Site visits: <span id="visit-count">0</span></p>
+  </footer>
+</body>
+</html>

@@ -24,6 +24,7 @@
       <div class="nav-links">
         <a href="models.html">Shop</a>
         <a href="index.html#contact">Contact</a>
+        <a href="login.html">Login</a>
       </div>
     </nav>
   </header>
@@ -41,20 +42,16 @@
     <section class="section upload-section" aria-labelledby="upload-title">
       <div class="admin-panel">
         <div>
-          <p class="eyebrow">Owner access</p>
-          <h2>Admin uploads</h2>
-          <p class="admin-note">Only the site owner can unlock the upload tools.</p>
+          <p class="eyebrow">Owner session</p>
+          <h2>Admin access</h2>
+          <p class="admin-note">Log in as the admin user to unlock the upload tools.</p>
         </div>
 
-        <form id="admin-form" class="admin-form">
-          <label>
-            Admin code
-            <input id="admin-code" name="admin-code" type="password" placeholder="Enter code" required />
-          </label>
-          <button class="button secondary" type="submit">Unlock</button>
-          <button id="admin-lock" class="button text-button" type="button" hidden>Lock</button>
-          <p id="admin-status" class="copy-status" aria-live="polite"></p>
-        </form>
+        <div class="admin-session">
+          <p id="admin-status" class="copy-status" aria-live="polite">Checking admin session...</p>
+          <a class="button secondary" href="login.html">Admin login</a>
+          <button id="logout-button" class="button text-button" type="button" hidden>Log out</button>
+        </div>
       </div>
 
       <div class="upload-panel" hidden>
@@ -66,17 +63,17 @@
         <form id="stl-form" class="upload-form">
           <label>
             Model name
-            <input id="model-name" name="model-name" type="text" placeholder="Desk organizer" required />
+            <input id="model-name" name="name" type="text" placeholder="Desk organizer" required />
           </label>
 
           <label>
             Price
-            <input id="model-price" name="model-price" type="number" min="0" step="0.01" placeholder="12.99" required />
+            <input id="model-price" name="price" type="number" min="0" step="0.01" placeholder="12.99" required />
           </label>
 
           <label>
             STL file
-            <input id="model-file" name="model-file" type="file" accept=".stl,model/stl" required />
+            <input id="model-file" name="file" type="file" accept=".stl,model/stl" required />
           </label>
 
           <button class="button primary" type="submit">Upload STL</button>

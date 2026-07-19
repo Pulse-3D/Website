@@ -2,25 +2,40 @@ const year = document.querySelector("#year");
 const contactButton = document.querySelector("#contact-button");
 const copyStatus = document.querySelector("#copy-status");
 const visitCount = document.querySelector("#visit-count");
-const adminForm = document.querySelector("#admin-form");
-const adminCode = document.querySelector("#admin-code");
-const adminLock = document.querySelector("#admin-lock");
 const adminStatus = document.querySelector("#admin-status");
+const logoutButton = document.querySelector("#logout-button");
 const stlForm = document.querySelector("#stl-form");
 const uploadPanel = document.querySelector(".upload-panel");
 const modelList = document.querySelector("#model-list");
 const designSearch = document.querySelector("#design-search");
+const shopStatus = document.querySelector("#shop-status");
+const publicLoginForm = document.querySelector("#public-login-form");
+const adminLoginForm = document.querySelector("#admin-login-form");
+const registerButton = document.querySelector("#register-button");
 
 const VISIT_KEY = "pulse3d-site-visits";
 const SESSION_VISIT_KEY = "pulse3d-session-counted";
 const MODEL_KEY = "pulse3d-model-listings";
-const ADMIN_KEY = "pulse3d-admin-unlocked";
-const ADMIN_CODE = "pulse3d-owner";
 const CONTACT_EMAIL = "kumaraarush022@gmail.com";
+let currentUser = null;
+let cachedModels = [];
 
 if (year) {
   year.textContent = new Date().getFullYear();
 }
+
+const api = async (path, options = {}) => {
+  const response = await fetch(path, {
+    credentials: "same-origin",
+    headers: options.body instanceof FormData ? {} : { "Content-Type": "application/json" },
+    ...options,
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.error || "Something went wrong.");
+  }
+  return data;
+};
 
 if (visitCount) {
   const currentVisits = Number(localStorage.getItem(VISIT_KEY) || "0");
@@ -30,6 +45,12 @@ if (visitCount) {
   localStorage.setItem(VISIT_KEY, String(visits));
   sessionStorage.setItem(SESSION_VISIT_KEY, "true");
   visitCount.textContent = visits.toLocaleString();
+
+  api("/api/visits")
+    .then((data) => {
+      visitCount.textContent = Number(data.count).toLocaleString();
+    })
+    .catch(() => {});
 }
 
 if (contactButton && copyStatus) {
@@ -43,21 +64,21 @@ if (contactButton && copyStatus) {
   });
 }
 
-const getModels = () => JSON.parse(localStorage.getItem(MODEL_KEY) || "[]");
-
-const saveModels = (models) => {
-  localStorage.setItem(MODEL_KEY, JSON.stringify(models));
-};
-
-const isAdminUnlocked = () => sessionStorage.getItem(ADMIN_KEY) === "true";
-
-const setAdminState = (unlocked) => {
+const setAdminState = () => {
   if (!uploadPanel) {
     return;
   }
 
+  const unlocked = currentUser && currentUser.role === "admin";
   uploadPanel.hidden = !unlocked;
-  adminLock.hidden = !unlocked;
+  if (logoutButton) {
+    logoutButton.hidden = !unlocked;
+  }
+  if (adminStatus) {
+    adminStatus.textContent = unlocked
+      ? `Logged in as ${currentUser.email}. Upload tools are unlocked.`
+      : "Admin login required before uploading designs.";
+  }
 };
 
 const escapeHtml = (value) =>
@@ -78,13 +99,12 @@ const renderModels = () => {
     return;
   }
 
-  const models = getModels();
   const query = designSearch ? designSearch.value.trim().toLowerCase() : "";
-  const filteredModels = models.filter((model) =>
+  const filteredModels = cachedModels.filter((model) =>
     `${model.name} ${model.fileName}`.toLowerCase().includes(query)
   );
 
-  if (models.length === 0) {
+  if (cachedModels.length === 0) {
     modelList.innerHTML = '<p class="empty-list">No designs are available yet.</p>';
     return;
   }
@@ -111,9 +131,9 @@ const renderModels = () => {
           <h3>${name}</h3>
           <p>Price: GBP ${price}</p>
           <p>File: ${fileName}</p>
-          <a class="button primary buy-button" href="mailto:${CONTACT_EMAIL}?subject=${buySubject}&body=${buyBody}">
+          <button class="button primary buy-button" type="button" data-design-id="${model.id}" data-mailto="mailto:${CONTACT_EMAIL}?subject=${buySubject}&body=${buyBody}">
             Buy design
-          </a>
+          </button>
         </article>
       `;
       }
@@ -121,46 +141,38 @@ const renderModels = () => {
     .join("");
 };
 
-if (adminForm && adminCode && adminStatus) {
-  setAdminState(isAdminUnlocked());
+const loadUser = async () => {
+  try {
+    const data = await api("/api/me");
+    currentUser = data.authenticated ? data : null;
+  } catch {
+    currentUser = null;
+  }
+  setAdminState();
+};
 
-  adminForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    if (adminCode.value === ADMIN_CODE) {
-      sessionStorage.setItem(ADMIN_KEY, "true");
-      adminStatus.textContent = "Upload tools unlocked.";
-      adminCode.value = "";
-      setAdminState(true);
-      return;
+const loadModels = async () => {
+  try {
+    const data = await api("/api/designs");
+    cachedModels = data.designs;
+  } catch {
+    cachedModels = JSON.parse(localStorage.getItem(MODEL_KEY) || "[]");
+    if (shopStatus) {
+      shopStatus.textContent = "Start the backend server to load shared designs.";
     }
-
-    adminStatus.textContent = "That admin code is not correct.";
-  });
-}
-
-if (adminLock) {
-  adminLock.addEventListener("click", () => {
-    sessionStorage.removeItem(ADMIN_KEY);
-    setAdminState(false);
-
-    if (adminStatus) {
-      adminStatus.textContent = "Upload tools locked.";
-    }
-  });
-}
+  }
+  renderModels();
+};
 
 if (stlForm) {
   stlForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    if (!isAdminUnlocked()) {
+    if (!currentUser || currentUser.role !== "admin") {
       document.querySelector("#upload-status").textContent = "Unlock admin uploads first.";
       return;
     }
 
-    const name = document.querySelector("#model-name").value.trim();
-    const price = document.querySelector("#model-price").value;
     const file = document.querySelector("#model-file").files[0];
     const uploadStatus = document.querySelector("#upload-status");
 
@@ -169,18 +181,19 @@ if (stlForm) {
       return;
     }
 
-    const models = getModels();
-    models.unshift({
-      name,
-      price,
-      fileName: file.name,
-      uploadedAt: new Date().toISOString(),
-    });
-
-    saveModels(models);
-    renderModels();
-    stlForm.reset();
-    uploadStatus.textContent = `${name} was added.`;
+    api("/api/designs", {
+      method: "POST",
+      body: new FormData(stlForm),
+    })
+      .then((data) => {
+        cachedModels.unshift(data.design);
+        renderModels();
+        stlForm.reset();
+        uploadStatus.textContent = `${data.design.name} was added.`;
+      })
+      .catch((error) => {
+        uploadStatus.textContent = error.message;
+      });
   });
 }
 
@@ -188,4 +201,96 @@ if (designSearch) {
   designSearch.addEventListener("input", renderModels);
 }
 
-renderModels();
+if (modelList) {
+  modelList.addEventListener("click", (event) => {
+    const button = event.target.closest(".buy-button");
+    if (!button) {
+      return;
+    }
+
+    if (!currentUser) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    api("/api/purchases", {
+      method: "POST",
+      body: JSON.stringify({ designId: Number(button.dataset.designId) }),
+    })
+      .then((data) => {
+        if (shopStatus) {
+          shopStatus.textContent = data.message;
+        }
+        window.location.href = button.dataset.mailto;
+      })
+      .catch((error) => {
+        if (shopStatus) {
+          shopStatus.textContent = error.message;
+        }
+      });
+  });
+}
+
+const handleLogin = (form, statusId, role) => {
+  if (!form) {
+    return;
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const status = document.querySelector(statusId);
+    const formData = new FormData(form);
+
+    api("/api/login", {
+      method: "POST",
+      body: JSON.stringify({
+        email: formData.get("email"),
+        password: formData.get("password"),
+        role,
+      }),
+    })
+      .then((user) => {
+        status.textContent = "Logged in.";
+        window.location.href = user.role === "admin" ? "admin.html" : "models.html";
+      })
+      .catch((error) => {
+        status.textContent = error.message;
+      });
+  });
+};
+
+handleLogin(publicLoginForm, "#public-login-status", "public");
+handleLogin(adminLoginForm, "#admin-login-status", "admin");
+
+if (registerButton && publicLoginForm) {
+  registerButton.addEventListener("click", () => {
+    const status = document.querySelector("#public-login-status");
+    const formData = new FormData(publicLoginForm);
+
+    api("/api/register", {
+      method: "POST",
+      body: JSON.stringify({
+        email: formData.get("email"),
+        password: formData.get("password"),
+      }),
+    })
+      .then(() => {
+        status.textContent = "Account created.";
+        window.location.href = "models.html";
+      })
+      .catch((error) => {
+        status.textContent = error.message;
+      });
+  });
+}
+
+if (logoutButton) {
+  logoutButton.addEventListener("click", () => {
+    api("/api/logout", { method: "POST", body: JSON.stringify({}) }).then(() => {
+      currentUser = null;
+      setAdminState();
+    });
+  });
+}
+
+loadUser().then(loadModels);
