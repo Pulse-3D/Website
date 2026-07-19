@@ -5,7 +5,7 @@ const copyStatus = document.querySelector("#copy-status");
 year.textContent = new Date().getFullYear();
 
 contactButton.addEventListener("click", async () => {
-  const email = "hello@pulse3d.example";
+  const email = "kumaraarush022@gmail.com";
 
   try {
     await navigator.clipboard.writeText(email);
