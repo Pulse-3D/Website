@@ -23,6 +23,7 @@ const SESSION_VISIT_KEY = "pulse3d-session-counted";
 const MODEL_KEY = "pulse3d-model-listings";
 const CONTACT_EMAIL = "kumaraarush022@gmail.com";
 const PURCHASED_KEY = "pulse3d-purchased-designs";
+const USER_KEY = "pulse3d-current-user";
 let currentUser = null;
 let cachedModels = [];
 
@@ -36,6 +37,14 @@ const getPurchasedDesignIds = () => {
 
 const savePurchasedDesignIds = (designIds) => {
   localStorage.setItem(PURCHASED_KEY, JSON.stringify(designIds));
+};
+
+const saveCurrentUser = (user) => {
+  if (user) {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+  } else {
+    localStorage.removeItem(USER_KEY);
+  }
 };
 
 const renderProfilePage = () => {
@@ -233,6 +242,19 @@ const loadUser = async () => {
   } catch {
     currentUser = null;
   }
+
+  if (!currentUser) {
+    try {
+      const storedUser = JSON.parse(localStorage.getItem(USER_KEY) || "null");
+      if (storedUser && storedUser.email) {
+        currentUser = storedUser;
+      }
+    } catch {
+      currentUser = null;
+    }
+  }
+
+  saveCurrentUser(currentUser);
   setAdminState();
   updateProfileUI();
 };
@@ -339,8 +361,9 @@ const handleLogin = (form, statusElement) => {
           statusElement.textContent = "Logged in.";
         }
         currentUser = user;
+        saveCurrentUser(currentUser);
         updateProfileUI();
-        window.location.href = user.role === "admin" ? "admin.html" : "index.html";
+        window.location.replace(user.role === "admin" ? "admin.html" : "index.html");
       })
       .catch((error) => {
         if (statusElement) {
@@ -403,9 +426,10 @@ if (logoutButton) {
   logoutButton.addEventListener("click", () => {
     api("/api/logout", { method: "POST", body: JSON.stringify({}) }).then(() => {
       currentUser = null;
+      saveCurrentUser(null);
       setAdminState();
       updateProfileUI();
-      window.location.href = "index.html";
+      window.location.replace("index.html");
     });
   });
 }
@@ -422,9 +446,10 @@ if (signoutButton) {
   signoutButton.addEventListener("click", () => {
     api("/api/logout", { method: "POST", body: JSON.stringify({}) }).then(() => {
       currentUser = null;
+      saveCurrentUser(null);
       setAdminState();
       updateProfileUI();
-      window.location.href = "index.html";
+      window.location.replace("index.html");
     });
   });
 }
