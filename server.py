@@ -20,7 +20,7 @@ UPLOAD_DIR = ROOT / "uploads"
 SESSION_COOKIE = "pulse3d_session"
 VISITOR_COOKIE = "pulse3d_visitor"
 ADMIN_EMAIL = os.environ.get("PULSE3D_ADMIN_EMAIL", "admin@pulse3d.local")
-ADMIN_PASSWORD = os.environ.get("PULSE3D_ADMIN_PASSWORD", "ChangeMe123!")
+ADMIN_PASSWORD = os.environ.get("PULSE3D_ADMIN_PASSWORD", "admin123")
 SESSIONS = {}
 
 
@@ -84,7 +84,12 @@ def init_db():
     existing_admin = connection.execute(
       "SELECT id FROM users WHERE role = 'admin' LIMIT 1"
     ).fetchone()
-    if not existing_admin:
+    if existing_admin:
+      connection.execute(
+        "UPDATE users SET email = ?, password_hash = ? WHERE id = ?",
+        (ADMIN_EMAIL, hash_password(ADMIN_PASSWORD), existing_admin["id"]),
+      )
+    else:
       connection.execute(
         "INSERT INTO users (email, password_hash, role) VALUES (?, ?, 'admin')",
         (ADMIN_EMAIL, hash_password(ADMIN_PASSWORD)),

@@ -9,8 +9,7 @@ const uploadPanel = document.querySelector(".upload-panel");
 const modelList = document.querySelector("#model-list");
 const designSearch = document.querySelector("#design-search");
 const shopStatus = document.querySelector("#shop-status");
-const publicLoginForm = document.querySelector("#public-login-form");
-const adminLoginForm = document.querySelector("#admin-login-form");
+const authForm = document.querySelector("#auth-form");
 const registerButton = document.querySelector("#register-button");
 
 const VISIT_KEY = "pulse3d-site-visits";
@@ -231,14 +230,13 @@ if (modelList) {
   });
 }
 
-const handleLogin = (form, statusId, role) => {
+const handleLogin = (form, statusElement) => {
   if (!form) {
     return;
   }
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    const status = document.querySelector(statusId);
     const formData = new FormData(form);
 
     api("/api/login", {
@@ -246,26 +244,24 @@ const handleLogin = (form, statusId, role) => {
       body: JSON.stringify({
         email: formData.get("email"),
         password: formData.get("password"),
-        role,
       }),
     })
       .then((user) => {
-        status.textContent = "Logged in.";
+        statusElement.textContent = "Logged in.";
         window.location.href = user.role === "admin" ? "admin.html" : "models.html";
       })
       .catch((error) => {
-        status.textContent = error.message;
+        statusElement.textContent = error.message;
       });
   });
 };
 
-handleLogin(publicLoginForm, "#public-login-status", "public");
-handleLogin(adminLoginForm, "#admin-login-status", "admin");
+handleLogin(authForm, document.querySelector("#auth-status"));
 
-if (registerButton && publicLoginForm) {
+if (registerButton && authForm) {
   registerButton.addEventListener("click", () => {
-    const status = document.querySelector("#public-login-status");
-    const formData = new FormData(publicLoginForm);
+    const status = document.querySelector("#auth-status");
+    const formData = new FormData(authForm);
 
     api("/api/register", {
       method: "POST",
