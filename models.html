@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pulse 3D Models</title>
+  <meta
+    name="description"
+    content="Upload STL files and create model listings for Pulse 3D."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="index.html">Pulse 3D</a>
+      <div class="nav-links">
+        <a href="index.html#services">Services</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <p class="eyebrow">Model library</p>
+      <h1>Upload and price your STL files.</h1>
+      <p class="hero-text">
+        Add a model name, set a price, and choose an STL file to build a simple
+        listing for your Pulse 3D catalog.
+      </p>
+    </section>
+
+    <section class="section upload-section" aria-labelledby="upload-title">
+      <div class="upload-panel">
+        <div>
+          <p class="eyebrow">New listing</p>
+          <h2 id="upload-title">Add a model</h2>
+        </div>
+
+        <form id="stl-form" class="upload-form">
+          <label>
+            Model name
+            <input id="model-name" name="model-name" type="text" placeholder="Desk organizer" required />
+          </label>
+
+          <label>
+            Price
+            <input id="model-price" name="model-price" type="number" min="0" step="0.01" placeholder="12.99" required />
+          </label>
+
+          <label>
+            STL file
+            <input id="model-file" name="model-file" type="file" accept=".stl,model/stl" required />
+          </label>
+
+          <button class="button primary" type="submit">Upload STL</button>
+          <p id="upload-status" class="copy-status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="listings-title">
+      <div class="section-heading">
+        <p class="eyebrow">Saved models</p>
+        <h2 id="listings-title">Your listings</h2>
+      </div>
+      <div id="model-list" class="listing-grid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; <span id="year"></span> Pulse 3D. All rights reserved.</p>
+    <p class="visitor-count">Site visits: <span id="visit-count">0</span></p>
+  </footer>
+</body>
+</html>

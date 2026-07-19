@@ -73,6 +73,7 @@ a {
 }
 
 .hero,
+.page-hero,
 .section,
 .footer {
   width: min(1120px, calc(100% - 32px));
@@ -213,6 +214,14 @@ h3 {
   padding: 58px 0;
 }
 
+.page-hero {
+  padding: 76px 0 24px;
+}
+
+.page-hero h1 {
+  max-width: 900px;
+}
+
 .section-heading {
   max-width: 720px;
   margin-bottom: 24px;
@@ -273,6 +282,84 @@ h3 {
   text-align: center;
 }
 
+.visitor-count {
+  margin-bottom: 0;
+  color: var(--blue-dark);
+}
+
+.upload-section {
+  padding-top: 34px;
+}
+
+.upload-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(320px, 1fr);
+  gap: 28px;
+  align-items: start;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 12px 30px rgba(18, 24, 38, 0.08);
+}
+
+.upload-form {
+  display: grid;
+  gap: 16px;
+}
+
+.upload-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.upload-form input {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  font: inherit;
+  background: #ffffff;
+}
+
+.upload-form input[type="file"] {
+  padding: 12px;
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.listing-card {
+  min-height: 160px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 12px 30px rgba(18, 24, 38, 0.08);
+}
+
+.listing-card p {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.empty-list {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.04rem;
+  font-weight: 700;
+}
+
 @media (max-width: 760px) {
   .nav {
     align-items: flex-start;
@@ -294,6 +381,11 @@ h3 {
   }
 
   .card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .upload-panel,
+  .listing-grid {
     grid-template-columns: 1fr;
   }
 }
