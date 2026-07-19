@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pulse 3D</title>
+  <meta
+    name="description"
+    content="Pulse 3D is a simple portfolio-style website for 3D design, printing, and creative projects."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="#home">Pulse 3D</a>
+      <div class="nav-links">
+        <a href="#work">Work</a>
+        <a href="#services">Services</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section id="home" class="hero">
+      <div class="hero-content">
+        <p class="eyebrow">Design. Prototype. Print.</p>
+        <h1>Creative 3D work made simple.</h1>
+        <p class="hero-text">
+          A clean home for 3D prints, product ideas, custom models, and project
+          updates.
+        </p>
+        <div class="hero-actions">
+          <a class="button primary" href="#work">View work</a>
+          <a class="button secondary" href="#contact">Get in touch</a>
+        </div>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <div class="cube cube-one"></div>
+        <div class="cube cube-two"></div>
+        <div class="cube cube-three"></div>
+      </div>
+    </section>
+
+    <section id="work" class="section">
+      <div class="section-heading">
+        <p class="eyebrow">Featured work</p>
+        <h2>Recent projects</h2>
+      </div>
+      <div class="card-grid">
+        <article class="card">
+          <h3>Custom Models</h3>
+          <p>Original 3D objects built for display, testing, and daily use.</p>
+        </article>
+        <article class="card">
+          <h3>Print Samples</h3>
+          <p>Material experiments, color tests, and refined print settings.</p>
+        </article>
+        <article class="card">
+          <h3>Product Ideas</h3>
+          <p>Small prototypes shaped from sketch to printable object.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="services" class="section split-section">
+      <div>
+        <p class="eyebrow">Services</p>
+        <h2>What this site can showcase</h2>
+      </div>
+      <ul class="service-list">
+        <li>3D design and concept mockups</li>
+        <li>Prototype prints and product experiments</li>
+        <li>Portfolio images, project notes, and updates</li>
+      </ul>
+    </section>
+
+    <section id="contact" class="section contact-section">
+      <p class="eyebrow">Contact</p>
+      <h2>Ready to build something?</h2>
+      <p>Add your email, Instagram, store link, or contact form here.</p>
+      <button id="contact-button" class="button primary" type="button">
+        Copy email placeholder
+      </button>
+      <p id="copy-status" class="copy-status" aria-live="polite"></p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; <span id="year"></span> Pulse 3D. All rights reserved.</p>
+  </footer>
+</body>
+</html>
