@@ -259,8 +259,13 @@ const updateProfileUI = () => {
     heroAuthActions.hidden = !showHeroActions;
     heroAuthActions.style.display = showHeroActions ? "block" : "none";
   }
+  if (profileDropdown) {
+    profileDropdown.hidden = true;
+    profileDropdown.style.display = "none";
+  }
   if (currentUser && profileToggle) {
     profileToggle.textContent = currentUser.email.charAt(0).toUpperCase();
+    profileToggle.setAttribute("aria-expanded", "false");
   }
 };
 
@@ -476,6 +481,7 @@ if (profileToggle && profileDropdown) {
   profileToggle.addEventListener("click", () => {
     const isHidden = profileDropdown.hidden;
     profileDropdown.hidden = !isHidden;
+    profileDropdown.style.display = isHidden ? "block" : "none";
     profileToggle.setAttribute("aria-expanded", String(isHidden));
   });
 }
