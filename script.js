@@ -10,6 +10,7 @@ const modelList = document.querySelector("#model-list");
 const designSearch = document.querySelector("#design-search");
 const shopStatus = document.querySelector("#shop-status");
 const authForm = document.querySelector("#auth-form");
+const loginButton = document.querySelector("#login-button");
 const registerForm = document.querySelector("#register-form");
 const authNav = document.querySelector("#auth-nav");
 const profileMenuWrapper = document.querySelector("#profile-menu-wrapper");
@@ -353,13 +354,12 @@ if (modelList) {
   });
 }
 
-const handleLogin = (form, statusElement) => {
-  if (!form) {
+const handleLogin = (form, button, statusElement) => {
+  if (!form || !button) {
     return;
   }
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
+  const submitLogin = () => {
     const formData = new FormData(form);
 
     api("/api/login", {
@@ -383,6 +383,16 @@ const handleLogin = (form, statusElement) => {
           statusElement.textContent = error.message || "Invalid email or password.";
         }
       });
+  };
+
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
+    submitLogin();
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    submitLogin();
   });
 };
 
@@ -432,7 +442,7 @@ const handleRegister = (form, statusElement) => {
   });
 };
 
-handleLogin(authForm, document.querySelector("#auth-status"));
+handleLogin(authForm, loginButton, document.querySelector("#auth-status"));
 handleRegister(registerForm, document.querySelector("#register-status"));
 
 if (logoutButton) {
