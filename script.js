@@ -111,42 +111,61 @@ if (year) {
 }
 
 const api = async (path, options = {}) => {
-  const url = path.startsWith("http") ? path : `${API_BASE}${path}`;
-  const response = await fetch(url, {
+  const finalUrl = path.startsWith("http") ? path : `${API_BASE}${path}`;
+  const fetchOptions = {
     credentials: "include",
-    headers: options.body instanceof FormData ? {} : { "Content-Type": "application/json" },
+    headers:
+      options.body instanceof FormData || options.body instanceof URLSearchParams
+        ? {}
+        : { "Content-Type": "application/json" },
     ...options,
-  });
+  };
 
-  const contentType = response.headers.get("Content-Type") || "";
-  let data;
+  const parseResponse = async (response, url) => {
+    const contentType = response.headers.get("Content-Type") || "";
+    let data;
 
-  if (contentType.includes("application/json")) {
-    const text = await response.text();
-    try {
-      data = text ? JSON.parse(text) : null;
-    } catch (error) {
-      console.error("Invalid JSON response from", url, text);
-      data = text;
+    if (contentType.includes("application/json")) {
+      const text = await response.text();
+      try {
+        data = text ? JSON.parse(text) : null;
+      } catch (error) {
+        console.error("Invalid JSON response from", url, text);
+        data = text;
+      }
+    } else {
+      data = await response.text();
     }
-  } else {
-    data = await response.text();
+
+    if (!response.ok) {
+      if (typeof data === "object" && data !== null) {
+        throw new Error(data.error || response.statusText || "Something went wrong.");
+      }
+      if (typeof data === "string") {
+        const htmlText = data.replace(/<[^>]+>/g, "").trim();
+        throw new Error(htmlText || response.statusText || `Request failed with status ${response.status}`);
+      }
+      throw new Error("Something went wrong.");
+    }
+    return data;
+  };
+
+  const fetchUrl = async (url) => {
+    const response = await fetch(url, fetchOptions);
+    return parseResponse(response, url);
+  };
+
+  try {
+    return await fetchUrl(finalUrl);
+  } catch (error) {
+    if (!finalUrl.startsWith(BACKEND_URL)) {
+      const fallbackUrl = `${BACKEND_URL.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+      if (fallbackUrl !== finalUrl) {
+        return await fetchUrl(fallbackUrl);
+      }
+    }
+    throw error;
   }
-
-  if (!response.ok) {
-    if (typeof data === "object" && data !== null) {
-      throw new Error(data.error || response.statusText || "Something went wrong.");
-    }
-
-    if (typeof data === "string") {
-      const htmlText = data.replace(/<[^>]+>/g, "").trim();
-      throw new Error(htmlText || response.statusText || `Request failed with status ${response.status}`);
-    }
-
-    throw new Error("Something went wrong.");
-  }
-
-  return data;
 };
 
 if (visitCount) {
@@ -401,7 +420,7 @@ const handleLogin = (form, button, statusElement) => {
 
     api("/api/login", {
       method: "POST",
-      body: JSON.stringify({
+      body: new URLSearchParams({
         email: formData.get("email"),
         password: formData.get("password"),
       }),
@@ -460,7 +479,7 @@ const handleRegister = (form, statusElement) => {
 
     api("/api/register", {
       method: "POST",
-      body: JSON.stringify({
+      body: new URLSearchParams({
         email: formData.get("email"),
         password,
       }),
