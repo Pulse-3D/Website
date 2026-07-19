@@ -25,15 +25,7 @@ html {
 }
 
 body {
-  margin: 0;
-  color: var(--ink);
-  font-family: Inter, Arial, sans-serif;
-  line-height: 1.5;
-  background:
-    radial-gradient(circle at 14% 12%, rgba(139, 92, 246, 0.2), transparent 16%),
-    radial-gradient(circle at 85% 18%, rgba(255, 107, 92, 0.16), transparent 18%),
-    radial-gradient(circle at 72% 84%, rgba(20, 184, 166, 0.16), transparent 20%),
-    linear-gradient(135deg, #fffaf3 0%, #f8f5ff 45%, #f4fffb 100%);
+
   background-attachment: fixed;
 }
 
@@ -70,14 +62,7 @@ a {
   letter-spacing: -0.02em;
 }
 
-.brand::before {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  content: "";
-  background: linear-gradient(135deg, var(--accent), var(--coral));
-  box-shadow: 0 0 0 6px rgba(139, 92, 246, 0.12);
-}
+
 
 .nav-links {
   display: flex;
