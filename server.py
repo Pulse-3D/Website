@@ -399,8 +399,9 @@ class PulseHandler(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
   init_db()
+  host = os.environ.get("HOST", "0.0.0.0")
   port = int(os.environ.get("PORT", "8000"))
-  server = ThreadingHTTPServer(("127.0.0.1", port), PulseHandler)
-  print(f"Pulse 3D running at http://127.0.0.1:{port}")
+  server = ThreadingHTTPServer((host, port), PulseHandler)
+  print(f"Pulse 3D running at http://{host}:{port}")
   print(f"Default admin login: {ADMIN_EMAIL} / {ADMIN_PASSWORD}")
   server.serve_forever()
