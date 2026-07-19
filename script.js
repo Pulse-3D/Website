@@ -25,11 +25,19 @@ const MODEL_KEY = "pulse3d-model-listings";
 const CONTACT_EMAIL = "kumaraarush022@gmail.com";
 const PURCHASED_KEY = "pulse3d-purchased-designs";
 const USER_KEY = "pulse3d-current-user";
-const API_BASE =
-  window.location.protocol === "file:" || window.location.port !== "8000"
-    ? "http://127.0.0.1:8000"
-    : "";
-const resolvePageUrl = (path) => (path.startsWith("http") ? path : `${API_BASE}${path}`);
+const BACKEND_URL = "http://127.0.0.1:8000";
+const LOCAL_HOSTS = ["127.0.0.1", "localhost", "0.0.0.0"];
+const isBackendHost = LOCAL_HOSTS.includes(window.location.hostname) && window.location.port === "8000";
+const API_BASE = window.location.protocol === "file:" || !isBackendHost ? BACKEND_URL : "";
+const resolvePageUrl = (path) => {
+  if (path.startsWith("http")) {
+    return path;
+  }
+  if (API_BASE) {
+    return `${API_BASE.replace(/\/$/, "")}/${path.replace(/^\//, "")}`;
+  }
+  return path.startsWith("/") ? path : `/${path}`;
+};
 let currentUser = null;
 let cachedModels = [];
 

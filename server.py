@@ -120,8 +120,27 @@ class PulseHandler(SimpleHTTPRequestHandler):
     return str(ROOT / clean_path)
 
   def end_headers(self):
+    origin = self.headers.get("Origin")
+    if origin:
+      self.send_header("Access-Control-Allow-Origin", origin)
+      self.send_header("Access-Control-Allow-Credentials", "true")
+    else:
+      self.send_header("Access-Control-Allow-Origin", "*")
     self.send_header("X-Content-Type-Options", "nosniff")
     super().end_headers()
+
+  def do_OPTIONS(self):
+    self.send_response(HTTPStatus.NO_CONTENT)
+    origin = self.headers.get("Origin")
+    if origin:
+      self.send_header("Access-Control-Allow-Origin", origin)
+      self.send_header("Access-Control-Allow-Credentials", "true")
+    else:
+      self.send_header("Access-Control-Allow-Origin", "*")
+    self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+    self.send_header("Access-Control-Allow-Headers", "Content-Type")
+    self.send_header("Access-Control-Max-Age", "86400")
+    self.end_headers()
 
   def do_GET(self):
     route = urlparse(self.path).path
