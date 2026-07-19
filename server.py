@@ -12,7 +12,7 @@ from http import HTTPStatus
 from http.cookies import SimpleCookie
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 
 
 ROOT = Path(__file__).resolve().parent
@@ -141,6 +141,8 @@ class PulseHandler(SimpleHTTPRequestHandler):
       return self.register()
     if route == "/api/login":
       return self.login()
+    if route == "/login":
+      return self.login_form()
     if route == "/api/logout":
       return self.logout()
     if route == "/api/designs":
@@ -165,6 +167,14 @@ class PulseHandler(SimpleHTTPRequestHandler):
     if length == 0:
       return {}
     return json.loads(self.rfile.read(length).decode())
+
+  def read_form(self):
+    length = int(self.headers.get("Content-Length", "0"))
+    if length == 0:
+      return {}
+    raw = self.rfile.read(length).decode()
+    parsed = parse_qs(raw)
+    return {key: values[0] if values else "" for key, values in parsed.items()}
 
   def session_user(self):
     cookie = SimpleCookie(self.headers.get("Cookie"))
@@ -224,26 +234,44 @@ class PulseHandler(SimpleHTTPRequestHandler):
 
   def login(self):
     data = self.read_json()
+    return self.perform_login(data, as_html=False)
+
+  def login_form(self):
+    data = self.read_form()
+    return self.perform_login(data, as_html=True)
+
+  def perform_login(self, data, as_html=False):
     email = data.get("email", "").strip().lower()
     password = data.get("password", "")
-    role = data.get("role")
     with db() as connection:
       user = connection.execute(
         "SELECT id, email, password_hash, role FROM users WHERE email = ?", (email,)
       ).fetchone()
-    if not EMAIL_PATTERN.match(email):
+    if not EMAIL_PATTERN.match(email) or not user or not verify_password(password, user["password_hash"]):
+      if as_html:
+        self.send_response(HTTPStatus.UNAUTHORIZED)
+        self.send_header("Content-Type", "text/html")
+        self.end_headers()
+        self.wfile.write(
+          f"<html><body><h1>Login failed</h1><p>Invalid email or password.</p><a href=\"/login.html\">Back to login</a></body></html>".encode()
+        )
+        return
       return self.json_response({"error": "Invalid email or password."}, HTTPStatus.UNAUTHORIZED)
-    if not user or not verify_password(password, user["password_hash"]):
-      return self.json_response({"error": "Invalid email or password."}, HTTPStatus.UNAUTHORIZED)
-    if role and user["role"] != role:
-      return self.json_response({"error": "This account does not have that role."}, HTTPStatus.FORBIDDEN)
 
     token = secrets.token_urlsafe(32)
     SESSIONS[token] = user["id"]
-    headers = {"Set-Cookie": f"{SESSION_COOKIE}={token}; HttpOnly; Path=/; SameSite=Lax"}
+    cookie = f"{SESSION_COOKIE}={token}; HttpOnly; Path=/; SameSite=Lax"
+
+    if as_html:
+      self.send_response(HTTPStatus.SEE_OTHER)
+      self.send_header("Location", "/index.html")
+      self.send_header("Set-Cookie", cookie)
+      self.end_headers()
+      return
+
     return self.json_response(
       {"email": user["email"], "role": user["role"]},
-      extra_headers=headers,
+      extra_headers={"Set-Cookie": cookie},
     )
 
   def logout(self):
