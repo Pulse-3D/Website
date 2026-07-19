@@ -245,13 +245,19 @@ const renderModels = () => {
 
 const updateProfileUI = () => {
   if (authNav) {
-    authNav.hidden = Boolean(currentUser);
+    const showAuthNav = !currentUser;
+    authNav.hidden = !showAuthNav;
+    authNav.style.display = showAuthNav ? "flex" : "none";
   }
   if (profileMenuWrapper) {
-    profileMenuWrapper.hidden = !currentUser;
+    const showProfile = Boolean(currentUser);
+    profileMenuWrapper.hidden = !showProfile;
+    profileMenuWrapper.style.display = showProfile ? "flex" : "none";
   }
   if (heroAuthActions) {
-    heroAuthActions.hidden = Boolean(currentUser);
+    const showHeroActions = !currentUser;
+    heroAuthActions.hidden = !showHeroActions;
+    heroAuthActions.style.display = showHeroActions ? "block" : "none";
   }
   if (currentUser && profileToggle) {
     profileToggle.textContent = currentUser.email.charAt(0).toUpperCase();
