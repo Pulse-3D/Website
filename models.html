@@ -30,47 +30,25 @@
 
   <main>
     <section class="page-hero">
-      <p class="eyebrow">Model library</p>
-      <h1>Upload and price your STL files.</h1>
+      <p class="eyebrow">Model shop</p>
+      <h1>Browse printable designs from Pulse 3D.</h1>
       <p class="hero-text">
-        Add a model name, set a price, and choose an STL file to build a simple
-        listing for your Pulse 3D catalog.
+        Search available designs, check the price, and request to buy the model
+        you want.
       </p>
     </section>
 
-    <section class="section upload-section" aria-labelledby="upload-title">
-      <div class="upload-panel">
-        <div>
-          <p class="eyebrow">New listing</p>
-          <h2 id="upload-title">Add a model</h2>
+    <section class="section" aria-labelledby="listings-title">
+      <div class="shop-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Design catalog</p>
+          <h2 id="listings-title">Shop designs</h2>
         </div>
 
-        <form id="stl-form" class="upload-form">
-          <label>
-            Model name
-            <input id="model-name" name="model-name" type="text" placeholder="Desk organizer" required />
-          </label>
-
-          <label>
-            Price
-            <input id="model-price" name="model-price" type="number" min="0" step="0.01" placeholder="12.99" required />
-          </label>
-
-          <label>
-            STL file
-            <input id="model-file" name="model-file" type="file" accept=".stl,model/stl" required />
-          </label>
-
-          <button class="button primary" type="submit">Upload STL</button>
-          <p id="upload-status" class="copy-status" aria-live="polite"></p>
-        </form>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="listings-title">
-      <div class="section-heading">
-        <p class="eyebrow">Saved models</p>
-        <h2 id="listings-title">Your listings</h2>
+        <label class="search-control">
+          Search designs
+          <input id="design-search" type="search" placeholder="Search by name or STL file" />
+        </label>
       </div>
       <div id="model-list" class="listing-grid"></div>
     </section>

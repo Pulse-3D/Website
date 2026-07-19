@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pulse 3D Admin</title>
+  <meta
+    name="description"
+    content="Owner upload page for Pulse 3D model listings."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Main navigation">
+      <a class="brand" href="index.html">Pulse 3D</a>
+      <div class="nav-links">
+        <a href="models.html">Shop</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <p class="eyebrow">Owner studio</p>
+      <h1>Add new Pulse 3D designs.</h1>
+      <p class="hero-text">
+        Unlock the upload tools, add an STL file, choose a name, and set a price
+        for the public shop.
+      </p>
+    </section>
+
+    <section class="section upload-section" aria-labelledby="upload-title">
+      <div class="admin-panel">
+        <div>
+          <p class="eyebrow">Owner access</p>
+          <h2>Admin uploads</h2>
+          <p class="admin-note">Only the site owner can unlock the upload tools.</p>
+        </div>
+
+        <form id="admin-form" class="admin-form">
+          <label>
+            Admin code
+            <input id="admin-code" name="admin-code" type="password" placeholder="Enter code" required />
+          </label>
+          <button class="button secondary" type="submit">Unlock</button>
+          <button id="admin-lock" class="button text-button" type="button" hidden>Lock</button>
+          <p id="admin-status" class="copy-status" aria-live="polite"></p>
+        </form>
+      </div>
+
+      <div class="upload-panel" hidden>
+        <div>
+          <p class="eyebrow">New listing</p>
+          <h2 id="upload-title">Add a model</h2>
+        </div>
+
+        <form id="stl-form" class="upload-form">
+          <label>
+            Model name
+            <input id="model-name" name="model-name" type="text" placeholder="Desk organizer" required />
+          </label>
+
+          <label>
+            Price
+            <input id="model-price" name="model-price" type="number" min="0" step="0.01" placeholder="12.99" required />
+          </label>
+
+          <label>
+            STL file
+            <input id="model-file" name="model-file" type="file" accept=".stl,model/stl" required />
+          </label>
+
+          <button class="button primary" type="submit">Upload STL</button>
+          <p id="upload-status" class="copy-status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="admin-listings-title">
+      <div class="shop-heading">
+        <div class="section-heading">
+          <p class="eyebrow">Current shop</p>
+          <h2 id="admin-listings-title">Live listings</h2>
+        </div>
+
+        <label class="search-control">
+          Search designs
+          <input id="design-search" type="search" placeholder="Search by name or STL file" />
+        </label>
+      </div>
+      <div id="model-list" class="listing-grid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; <span id="year"></span> Pulse 3D. All rights reserved.</p>
+    <p class="visitor-count">Site visits: <span id="visit-count">0</span></p>
+  </footer>
+</body>
+</html>
