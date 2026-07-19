@@ -107,7 +107,7 @@ p {
 h1 {
   max-width: 760px;
   margin-bottom: 20px;
-  color: var(--blue);
+  color: var(--coral);
   font-size: clamp(3rem, 8vw, 5.8rem);
   line-height: 0.95;
   letter-spacing: 0;
