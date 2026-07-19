@@ -102,10 +102,23 @@ const api = async (path, options = {}) => {
     headers: options.body instanceof FormData ? {} : { "Content-Type": "application/json" },
     ...options,
   });
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data.error || "Something went wrong.");
+
+  const contentType = response.headers.get("Content-Type") || "";
+  let data;
+
+  if (contentType.includes("application/json")) {
+    data = await response.json();
+  } else {
+    data = await response.text();
   }
+
+  if (!response.ok) {
+    if (typeof data === "object" && data !== null) {
+      throw new Error(data.error || "Something went wrong.");
+    }
+    throw new Error(typeof data === "string" ? data : "Something went wrong.");
+  }
+
   return data;
 };
 
