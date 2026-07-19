@@ -147,6 +147,8 @@ a {
 
 .profile-dropdown a,
 .profile-dropdown button {
+  display: block;
+  width: 100%;
   padding: 8px 10px;
   border: none;
   border-radius: 8px;
