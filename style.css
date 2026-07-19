@@ -628,6 +628,19 @@ h3 {
   font-weight: 700;
 }
 
+.purchased-card {
+  border-color: rgba(15, 118, 110, 0.42);
+  background: rgba(238, 248, 244, 0.9);
+}
+
+.purchase-status {
+  margin-bottom: 12px;
+  color: var(--blue-dark);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 .listing-number {
   color: var(--blue-dark);
   font-size: 0.78rem;
