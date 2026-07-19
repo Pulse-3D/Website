@@ -11,6 +11,12 @@ const designSearch = document.querySelector("#design-search");
 const shopStatus = document.querySelector("#shop-status");
 const authForm = document.querySelector("#auth-form");
 const registerForm = document.querySelector("#register-form");
+const authNav = document.querySelector("#auth-nav");
+const profileMenuWrapper = document.querySelector("#profile-menu-wrapper");
+const profileToggle = document.querySelector("#profile-toggle");
+const profileDropdown = document.querySelector("#profile-dropdown");
+const heroAuthActions = document.querySelector("#hero-auth-actions");
+const signoutButton = document.querySelector("#signout-button");
 
 const VISIT_KEY = "pulse3d-site-visits";
 const SESSION_VISIT_KEY = "pulse3d-session-counted";
@@ -30,6 +36,51 @@ const getPurchasedDesignIds = () => {
 
 const savePurchasedDesignIds = (designIds) => {
   localStorage.setItem(PURCHASED_KEY, JSON.stringify(designIds));
+};
+
+const renderProfilePage = () => {
+  const profileStatus = document.querySelector("#profile-status");
+  if (profileStatus) {
+    profileStatus.textContent = currentUser
+      ? `Signed in as ${currentUser.email}.`
+      : "Please sign in to view your account details.";
+  }
+};
+
+const renderPurchasedItems = () => {
+  const purchasesList = document.querySelector("#purchases-list");
+  if (!purchasesList) {
+    return;
+  }
+
+  const purchasedDesignIds = getPurchasedDesignIds();
+  if (purchasedDesignIds.length === 0) {
+    purchasesList.innerHTML = '<p class="empty-list">You have not purchased any designs yet.</p>';
+    return;
+  }
+
+  const purchasedModels = cachedModels.filter((model) =>
+    purchasedDesignIds.includes(String(model.id))
+  );
+
+  if (purchasedModels.length === 0) {
+    purchasesList.innerHTML = '<p class="empty-list">Your purchased designs are still loading.</p>';
+    return;
+  }
+
+  purchasesList.innerHTML = purchasedModels
+    .map((model) => {
+      const name = escapeHtml(model.name);
+      const price = Number(model.price).toFixed(2);
+      return `
+        <article class="listing-card purchased-card">
+          <h3>${name}</h3>
+          <p>Price: GBP ${price}</p>
+          <a class="button secondary" href="/api/designs/${model.id}/download" target="_blank" rel="noopener">Download STL</a>
+        </article>
+      `;
+    })
+    .join("");
 };
 
 if (year) {
@@ -160,6 +211,21 @@ const renderModels = () => {
     .join("");
 };
 
+const updateProfileUI = () => {
+  if (authNav) {
+    authNav.hidden = Boolean(currentUser);
+  }
+  if (profileMenuWrapper) {
+    profileMenuWrapper.hidden = !currentUser;
+  }
+  if (heroAuthActions) {
+    heroAuthActions.hidden = Boolean(currentUser);
+  }
+  if (currentUser && profileToggle) {
+    profileToggle.textContent = currentUser.email.charAt(0).toUpperCase();
+  }
+};
+
 const loadUser = async () => {
   try {
     const data = await api("/api/me");
@@ -168,6 +234,7 @@ const loadUser = async () => {
     currentUser = null;
   }
   setAdminState();
+  updateProfileUI();
 };
 
 const loadModels = async () => {
@@ -271,7 +338,9 @@ const handleLogin = (form, statusElement) => {
         if (statusElement) {
           statusElement.textContent = "Logged in.";
         }
-        window.location.href = user.role === "admin" ? "admin.html" : "models.html";
+        currentUser = user;
+        updateProfileUI();
+        window.location.href = user.role === "admin" ? "admin.html" : "index.html";
       })
       .catch((error) => {
         if (statusElement) {
@@ -335,8 +404,34 @@ if (logoutButton) {
     api("/api/logout", { method: "POST", body: JSON.stringify({}) }).then(() => {
       currentUser = null;
       setAdminState();
+      updateProfileUI();
+      window.location.href = "index.html";
     });
   });
 }
 
-loadUser().then(loadModels);
+if (profileToggle && profileDropdown) {
+  profileToggle.addEventListener("click", () => {
+    const isHidden = profileDropdown.hidden;
+    profileDropdown.hidden = !isHidden;
+    profileToggle.setAttribute("aria-expanded", String(isHidden));
+  });
+}
+
+if (signoutButton) {
+  signoutButton.addEventListener("click", () => {
+    api("/api/logout", { method: "POST", body: JSON.stringify({}) }).then(() => {
+      currentUser = null;
+      setAdminState();
+      updateProfileUI();
+      window.location.href = "index.html";
+    });
+  });
+}
+
+loadUser()
+  .then(() => loadModels())
+  .then(() => {
+    renderProfilePage();
+    renderPurchasedItems();
+  });

@@ -25,8 +25,19 @@
         <a href="models.html">Work</a>
         <a href="#services">Services</a>
         <a href="#contact">Contact</a>
-        <a class="button secondary nav-action" href="login.html">Login</a>
-        <a class="button primary nav-action" href="register.html">Create account</a>
+        <div id="auth-nav" class="auth-nav">
+          <a class="button secondary nav-action" href="login.html">Login</a>
+          <a class="button primary nav-action" href="register.html">Create account</a>
+        </div>
+        <div id="profile-menu-wrapper" class="profile-menu-wrapper" hidden>
+          <button id="profile-toggle" class="profile-toggle" type="button" aria-haspopup="true" aria-expanded="false">👤</button>
+          <div id="profile-dropdown" class="profile-dropdown" hidden>
+            <a href="profile.html">Account details</a>
+            <a href="purchases.html">Models purchased</a>
+            <a href="rewards.html">Rewards</a>
+            <button id="signout-button" class="text-button" type="button">Sign out</button>
+          </div>
+        </div>
       </div>
     </nav>
   </header>
@@ -42,8 +53,10 @@
         </p>
         <div class="hero-actions">
           <a class="button primary" href="models.html">View work</a>
-          <a class="button secondary" href="login.html">Login</a>
-          <a class="button secondary" href="register.html">Create account</a>
+          <span id="hero-auth-actions">
+            <a class="button secondary" href="login.html">Login</a>
+            <a class="button secondary" href="register.html">Create account</a>
+          </span>
           <a class="button secondary" href="#contact">Get in touch</a>
         </div>
       </div>
