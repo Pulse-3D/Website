@@ -125,6 +125,9 @@ class PulseHandler(SimpleHTTPRequestHandler):
 
   def do_GET(self):
     route = urlparse(self.path).path
+    if route == "/login":
+      self.path = "/login.html"
+      return super().do_GET()
     if route == "/api/me":
       return self.get_me()
     if route == "/api/designs":
@@ -175,6 +178,14 @@ class PulseHandler(SimpleHTTPRequestHandler):
     raw = self.rfile.read(length).decode()
     parsed = parse_qs(raw)
     return {key: values[0] if values else "" for key, values in parsed.items()}
+
+  def parse_request_body(self):
+    content_type = self.headers.get("Content-Type", "") or ""
+    if content_type.startswith("application/json"):
+      return self.read_json()
+    if content_type.startswith("application/x-www-form-urlencoded") or "multipart/form-data" in content_type:
+      return self.read_form()
+    return self.read_json()
 
   def session_user(self):
     cookie = SimpleCookie(self.headers.get("Cookie"))
@@ -233,7 +244,7 @@ class PulseHandler(SimpleHTTPRequestHandler):
     )
 
   def login(self):
-    data = self.read_json()
+    data = self.parse_request_body()
     return self.perform_login(data, as_html=False)
 
   def login_form(self):

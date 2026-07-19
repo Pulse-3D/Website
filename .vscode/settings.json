@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^cd '/Users/rajneshkumar/Documents/Pulse 3D/Website' && python3 server\\.py$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

@@ -25,7 +25,10 @@ const MODEL_KEY = "pulse3d-model-listings";
 const CONTACT_EMAIL = "kumaraarush022@gmail.com";
 const PURCHASED_KEY = "pulse3d-purchased-designs";
 const USER_KEY = "pulse3d-current-user";
-const API_BASE = window.location.protocol === "file:" ? "http://127.0.0.1:8000" : "";
+const API_BASE =
+  window.location.protocol === "file:" || window.location.port !== "8000"
+    ? "http://127.0.0.1:8000"
+    : "";
 const resolvePageUrl = (path) => (path.startsWith("http") ? path : `${API_BASE}${path}`);
 let currentUser = null;
 let cachedModels = [];
@@ -124,9 +127,15 @@ const api = async (path, options = {}) => {
 
   if (!response.ok) {
     if (typeof data === "object" && data !== null) {
-      throw new Error(data.error || "Something went wrong.");
+      throw new Error(data.error || response.statusText || "Something went wrong.");
     }
-    throw new Error(typeof data === "string" ? data : "Something went wrong.");
+
+    if (typeof data === "string") {
+      const htmlText = data.replace(/<[^>]+>/g, "").trim();
+      throw new Error(htmlText || response.statusText || `Request failed with status ${response.status}`);
+    }
+
+    throw new Error("Something went wrong.");
   }
 
   return data;
