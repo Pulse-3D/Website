@@ -236,7 +236,7 @@ class PulseHandler(SimpleHTTPRequestHandler):
     )
 
   def register(self):
-    data = self.read_json()
+    data = self.parse_request_body()
     email = data.get("email", "").strip().lower()
     password = data.get("password", "")
     if not EMAIL_PATTERN.match(email) or len(password) < 8:

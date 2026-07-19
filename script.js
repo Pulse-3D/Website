@@ -466,10 +466,23 @@ const handleRegister = (form, statusElement) => {
       }),
     })
       .then(() => {
-        if (statusElement) {
-          statusElement.textContent = "Account created. You can now log in.";
-        }
-        window.location.href = resolvePageUrl("login.html");
+        let countdown = 5;
+        const updateStatus = () => {
+          if (statusElement) {
+            statusElement.textContent = `Account created. Redirecting to login in ${countdown} ${countdown === 1 ? "second" : "seconds"}...`;
+          }
+        };
+
+        updateStatus();
+        const intervalId = setInterval(() => {
+          countdown -= 1;
+          if (countdown <= 0) {
+            clearInterval(intervalId);
+            window.location.href = resolvePageUrl("login.html");
+          } else {
+            updateStatus();
+          }
+        }, 1000);
       })
       .catch((error) => {
         if (statusElement) {
