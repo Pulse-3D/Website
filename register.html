@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pulse 3D Login</title>
+  <title>Pulse 3D Create Account</title>
   <meta
     name="description"
-    content="Public and admin login for Pulse 3D."
+    content="Create a customer account for Pulse 3D."
   />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -23,43 +23,41 @@
       <a class="brand" href="index.html">Pulse 3D</a>
       <div class="nav-links">
         <a href="models.html">Shop</a>
-        <a href="admin.html">Admin</a>
+        <a href="login.html">Login</a>
       </div>
     </nav>
   </header>
 
   <main>
     <section class="page-hero">
-      <p class="eyebrow">Account access</p>
-      <h1>Single login for customers and owners.</h1>
+      <p class="eyebrow">Create account</p>
+      <h1>Create your Pulse 3D account.</h1>
       <p class="hero-text">
-        Use one login form for both customer and owner accounts. Admin sign-in opens the control panel for managing designs.
-      </p>
-      <p class="admin-note">
-        Default admin access: <strong>admin@pulse3d.local</strong> / <strong>admin123</strong>
+        Create a public account to browse and request designs. Owners can still use the same single login form for admin access.
       </p>
     </section>
 
-    <section class="section" aria-label="Login form">
-      <form id="auth-form" class="auth-card">
-        <p class="eyebrow">Sign in</p>
-        <h2>Welcome back</h2>
-        <p class="hero-text">
-          Enter your email and password. If you sign in with admin details, you will be taken to the owner dashboard.
-        </p>
+    <section class="section" aria-label="Create account form">
+      <form id="register-form" class="auth-card">
+        <p class="eyebrow">New account</p>
+        <h2>Sign up</h2>
         <label>
           Email
-          <input name="email" type="email" placeholder="you@example.com" required />
+          <input name="email" type="email" placeholder="you@gmail.com" required />
         </label>
         <label>
           Password
-          <input name="password" type="password" placeholder="8+ characters" required />
+          <input name="password" type="password" placeholder="At least 8 characters" required />
+        </label>
+        <label>
+          Confirm password
+          <input name="confirmPassword" type="password" placeholder="Repeat password" required />
         </label>
         <div class="auth-actions">
-          <button class="button primary" type="submit">Log in</button>
-          <a class="button secondary" href="register.html">Create account</a>
+          <button class="button primary" type="submit">Create account</button>
+          <a class="button secondary" href="login.html">Back to login</a>
         </div>
-        <p id="auth-status" class="copy-status" aria-live="polite"></p>
+        <p id="register-status" class="copy-status" aria-live="polite"></p>
       </form>
     </section>
   </main>

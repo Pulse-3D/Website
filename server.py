@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import secrets
 import shutil
 import sqlite3
@@ -22,6 +23,7 @@ VISITOR_COOKIE = "pulse3d_visitor"
 ADMIN_EMAIL = os.environ.get("PULSE3D_ADMIN_EMAIL", "admin@pulse3d.local")
 ADMIN_PASSWORD = os.environ.get("PULSE3D_ADMIN_PASSWORD", "admin123")
 SESSIONS = {}
+EMAIL_PATTERN = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
 def db():
@@ -195,9 +197,9 @@ class PulseHandler(SimpleHTTPRequestHandler):
     data = self.read_json()
     email = data.get("email", "").strip().lower()
     password = data.get("password", "")
-    if "@" not in email or len(password) < 8:
+    if not EMAIL_PATTERN.match(email) or len(password) < 8:
       return self.json_response(
-        {"error": "Use an email and a password of at least 8 characters."},
+        {"error": "Use a valid email address and a password of at least 8 characters."},
         HTTPStatus.BAD_REQUEST,
       )
     try:
@@ -227,8 +229,10 @@ class PulseHandler(SimpleHTTPRequestHandler):
       user = connection.execute(
         "SELECT id, email, password_hash, role FROM users WHERE email = ?", (email,)
       ).fetchone()
+    if not EMAIL_PATTERN.match(email):
+      return self.json_response({"error": "Invalid email or password."}, HTTPStatus.UNAUTHORIZED)
     if not user or not verify_password(password, user["password_hash"]):
-      return self.json_response({"error": "Incorrect email or password."}, HTTPStatus.UNAUTHORIZED)
+      return self.json_response({"error": "Invalid email or password."}, HTTPStatus.UNAUTHORIZED)
     if role and user["role"] != role:
       return self.json_response({"error": "This account does not have that role."}, HTTPStatus.FORBIDDEN)
 

@@ -10,7 +10,7 @@ const modelList = document.querySelector("#model-list");
 const designSearch = document.querySelector("#design-search");
 const shopStatus = document.querySelector("#shop-status");
 const authForm = document.querySelector("#auth-form");
-const registerButton = document.querySelector("#register-button");
+const registerForm = document.querySelector("#register-form");
 
 const VISIT_KEY = "pulse3d-site-visits";
 const SESSION_VISIT_KEY = "pulse3d-session-counted";
@@ -247,38 +247,67 @@ const handleLogin = (form, statusElement) => {
       }),
     })
       .then((user) => {
-        statusElement.textContent = "Logged in.";
+        if (statusElement) {
+          statusElement.textContent = "Logged in.";
+        }
         window.location.href = user.role === "admin" ? "admin.html" : "models.html";
       })
       .catch((error) => {
-        statusElement.textContent = error.message;
+        if (statusElement) {
+          statusElement.textContent = error.message || "Invalid email or password.";
+        }
       });
   });
 };
 
-handleLogin(authForm, document.querySelector("#auth-status"));
+const handleRegister = (form, statusElement) => {
+  if (!form) {
+    return;
+  }
 
-if (registerButton && authForm) {
-  registerButton.addEventListener("click", () => {
-    const status = document.querySelector("#auth-status");
-    const formData = new FormData(authForm);
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const password = String(formData.get("password") || "");
+    const confirmPassword = String(formData.get("confirmPassword") || "");
+
+    if (password.length < 8) {
+      if (statusElement) {
+        statusElement.textContent = "Password must be at least 8 characters.";
+      }
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      if (statusElement) {
+        statusElement.textContent = "Passwords do not match.";
+      }
+      return;
+    }
 
     api("/api/register", {
       method: "POST",
       body: JSON.stringify({
         email: formData.get("email"),
-        password: formData.get("password"),
+        password,
       }),
     })
       .then(() => {
-        status.textContent = "Account created.";
-        window.location.href = "models.html";
+        if (statusElement) {
+          statusElement.textContent = "Account created. You can now log in.";
+        }
+        window.location.href = "login.html";
       })
       .catch((error) => {
-        status.textContent = error.message;
+        if (statusElement) {
+          statusElement.textContent = error.message || "Unable to create account.";
+        }
       });
   });
-}
+};
+
+handleLogin(authForm, document.querySelector("#auth-status"));
+handleRegister(registerForm, document.querySelector("#register-status"));
 
 if (logoutButton) {
   logoutButton.addEventListener("click", () => {
