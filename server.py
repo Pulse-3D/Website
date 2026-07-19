@@ -70,7 +70,7 @@ def init_db():
       CREATE TABLE IF NOT EXISTS purchases (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         design_id INTEGER NOT NULL,
-        user_id INTEGER NOT NULL,
+        user_id INTEGER,
         created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(design_id) REFERENCES designs(id),
         FOREIGN KEY(user_id) REFERENCES users(id)
@@ -129,6 +129,8 @@ class PulseHandler(SimpleHTTPRequestHandler):
       return self.get_me()
     if route == "/api/designs":
       return self.get_designs()
+    if route.startswith("/api/designs/") and route.endswith("/download"):
+      return self.download_design(route.split("/")[3])
     if route == "/api/visits":
       return self.get_visits()
     return super().do_GET()
@@ -308,20 +310,52 @@ class PulseHandler(SimpleHTTPRequestHandler):
     return self.json_response({"design": row_to_design(row)}, HTTPStatus.CREATED)
 
   def create_purchase(self):
-    user = self.require_user()
-    if not user:
-      return
+    user = self.session_user()
     data = self.read_json()
     design_id = data.get("designId")
     with db() as connection:
       design = connection.execute("SELECT id, name FROM designs WHERE id = ?", (design_id,)).fetchone()
       if not design:
         return self.json_response({"error": "Design not found."}, HTTPStatus.NOT_FOUND)
-      connection.execute(
-        "INSERT INTO purchases (design_id, user_id) VALUES (?, ?)",
-        (design["id"], user["id"]),
-      )
+      if user:
+        connection.execute(
+          "INSERT INTO purchases (design_id, user_id) VALUES (?, ?)",
+          (design["id"], user["id"]),
+        )
+      else:
+        connection.execute(
+          "INSERT INTO purchases (design_id, user_id) VALUES (?, NULL)",
+          (design["id"],),
+        )
     return self.json_response({"message": f"Purchase request saved for {design['name']}."})
+
+  def download_design(self, design_id):
+    try:
+      design_id = int(design_id)
+    except ValueError:
+      return self.json_response({"error": "Invalid design id."}, HTTPStatus.BAD_REQUEST)
+
+    with db() as connection:
+      design = connection.execute(
+        "SELECT id, file_name, stored_file FROM designs WHERE id = ?",
+        (design_id,),
+      ).fetchone()
+
+    if not design:
+      return self.json_response({"error": "Design not found."}, HTTPStatus.NOT_FOUND)
+
+    file_path = UPLOAD_DIR / design["stored_file"]
+    if not file_path.exists():
+      return self.json_response({"error": "Design file not found."}, HTTPStatus.NOT_FOUND)
+
+    body = file_path.read_bytes()
+    self.send_response(HTTPStatus.OK)
+    self.send_header("Content-Type", "application/octet-stream")
+    self.send_header("Content-Length", str(len(body)))
+    self.send_header("Content-Disposition", f'attachment; filename="{design["file_name"]}"')
+    self.end_headers()
+    self.wfile.write(body)
+    return None
 
   def get_visits(self):
     cookie = SimpleCookie(self.headers.get("Cookie"))

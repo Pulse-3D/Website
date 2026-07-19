@@ -16,8 +16,21 @@ const VISIT_KEY = "pulse3d-site-visits";
 const SESSION_VISIT_KEY = "pulse3d-session-counted";
 const MODEL_KEY = "pulse3d-model-listings";
 const CONTACT_EMAIL = "kumaraarush022@gmail.com";
+const PURCHASED_KEY = "pulse3d-purchased-designs";
 let currentUser = null;
 let cachedModels = [];
+
+const getPurchasedDesignIds = () => {
+  try {
+    return JSON.parse(localStorage.getItem(PURCHASED_KEY) || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const savePurchasedDesignIds = (designIds) => {
+  localStorage.setItem(PURCHASED_KEY, JSON.stringify(designIds));
+};
 
 if (year) {
   year.textContent = new Date().getFullYear();
@@ -113,6 +126,8 @@ const renderModels = () => {
     return;
   }
 
+  const purchasedDesignIds = getPurchasedDesignIds();
+
   modelList.innerHTML = filteredModels
     .map(
       (model, index) => {
@@ -123,16 +138,21 @@ const renderModels = () => {
         const buyBody = encodeURIComponent(
           `Hi, I would like to buy "${model.name}" for GBP ${price}.`
         );
+        const isPurchased = purchasedDesignIds.includes(String(model.id));
 
         return `
-        <article class="listing-card">
+        <article class="listing-card ${isPurchased ? "purchased-card" : ""}">
           <p class="listing-number">Design ${index + 1}</p>
           <h3>${name}</h3>
           <p>Price: GBP ${price}</p>
           <p>File: ${fileName}</p>
-          <button class="button primary buy-button" type="button" data-design-id="${model.id}" data-mailto="mailto:${CONTACT_EMAIL}?subject=${buySubject}&body=${buyBody}">
-            Buy design
-          </button>
+          ${isPurchased ? '<p class="purchase-status">Purchased</p>' : ""}
+          <div class="auth-actions">
+            <button class="button primary buy-button" type="button" data-design-id="${model.id}" data-mailto="mailto:${CONTACT_EMAIL}?subject=${buySubject}&body=${buyBody}">
+              ${isPurchased ? "Buy again" : "Buy design"}
+            </button>
+            ${isPurchased ? `<a class="button secondary" href="/api/designs/${model.id}/download" target="_blank" rel="noopener">Download STL</a>` : ""}
+          </div>
         </article>
       `;
       }
@@ -207,20 +227,21 @@ if (modelList) {
       return;
     }
 
-    if (!currentUser) {
-      window.location.href = "login.html";
-      return;
-    }
-
     api("/api/purchases", {
       method: "POST",
       body: JSON.stringify({ designId: Number(button.dataset.designId) }),
     })
       .then((data) => {
-        if (shopStatus) {
-          shopStatus.textContent = data.message;
+        const purchasedDesignIds = getPurchasedDesignIds();
+        if (!purchasedDesignIds.includes(String(button.dataset.designId))) {
+          purchasedDesignIds.push(String(button.dataset.designId));
+          savePurchasedDesignIds(purchasedDesignIds);
         }
-        window.location.href = button.dataset.mailto;
+        if (shopStatus) {
+          shopStatus.textContent = `${data.message} You can now download the STL after purchase.`;
+        }
+        renderModels();
+        window.open(button.dataset.mailto, "_blank", "noopener,noreferrer");
       })
       .catch((error) => {
         if (shopStatus) {
