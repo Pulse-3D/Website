@@ -112,13 +112,20 @@ if (year) {
 
 const api = async (path, options = {}) => {
   const finalUrl = path.startsWith("http") ? path : `${API_BASE}${path}`;
+  const headers = { ...(options.headers || {}) };
+
+  if (options.body instanceof URLSearchParams) {
+    headers["Content-Type"] = headers["Content-Type"] || "application/x-www-form-urlencoded;charset=UTF-8";
+  } else if (options.body instanceof FormData) {
+    // Let the browser set the multipart boundary automatically.
+  } else if (options.body !== undefined && options.body !== null) {
+    headers["Content-Type"] = headers["Content-Type"] || "application/json";
+  }
+
   const fetchOptions = {
     credentials: "include",
-    headers:
-      options.body instanceof FormData || options.body instanceof URLSearchParams
-        ? {}
-        : { "Content-Type": "application/json" },
     ...options,
+    headers,
   };
 
   const parseResponse = async (response, url) => {
