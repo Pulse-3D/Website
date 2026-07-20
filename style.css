@@ -12,6 +12,9 @@
   --gold: #ffbb4d;
   --accent: #8b5cf6;
   --accent-2: #14b8a6;
+  --rose: #f472b6;
+  --lime: #a3e635;
+  --cyan: #22d3ee;
   --shadow: 0 30px 80px rgba(29, 78, 216, 0.16);
   --shadow-soft: 0 18px 38px rgba(68, 59, 117, 0.12);
 }
@@ -61,7 +64,7 @@ body {
   position: relative;
   min-height: 100vh;
   margin: 0;
-  background: linear-gradient(135deg, #fff7ed 0%, #fdf2f8 16%, #eef2ff 45%, #ecfeff 72%, #fff7ed 100%);
+  background: linear-gradient(135deg, #fff7ed 0%, #ffe4f0 12%, #e0f2fe 30%, #ede9fe 52%, #dcfce7 70%, #fef3c7 100%);
   background-size: 400% 400%;
   color: var(--ink);
   background-attachment: fixed;
@@ -72,10 +75,11 @@ body::before {
   position: fixed;
   inset: -10%;
   background:
-    radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.22), transparent 29%),
-    radial-gradient(circle at 85% 18%, rgba(255, 107, 92, 0.2), transparent 24%),
-    radial-gradient(circle at 82% 80%, rgba(20, 184, 166, 0.19), transparent 26%),
-    radial-gradient(circle at 18% 82%, rgba(139, 92, 246, 0.18), transparent 28%);
+    radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.28), transparent 29%),
+    radial-gradient(circle at 85% 18%, rgba(244, 114, 182, 0.24), transparent 24%),
+    radial-gradient(circle at 82% 80%, rgba(20, 184, 166, 0.23), transparent 26%),
+    radial-gradient(circle at 18% 82%, rgba(163, 230, 53, 0.22), transparent 28%),
+    radial-gradient(circle at 50% 50%, rgba(34, 211, 238, 0.16), transparent 32%);
   filter: blur(34px);
   animation: floatGlow 10s ease-in-out infinite;
   content: "";
@@ -272,7 +276,7 @@ h1,
 h2,
 .page-hero .eyebrow,
 .hero .eyebrow {
-  background: linear-gradient(90deg, var(--coral), var(--accent), var(--accent-2), var(--blue));
+  background: linear-gradient(90deg, var(--coral), var(--rose), var(--accent), var(--accent-2), var(--cyan), var(--lime));
   background-size: 220% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -332,7 +336,7 @@ h3 {
 }
 
 .button.primary {
-  background: linear-gradient(135deg, var(--coral), var(--accent), var(--accent-2));
+  background: linear-gradient(135deg, var(--coral), var(--rose), var(--accent), var(--accent-2), var(--cyan));
   background-size: 180% 100%;
   color: #ffffff;
   box-shadow: 0 16px 36px rgba(139, 92, 246, 0.24);
@@ -669,7 +673,7 @@ h3 {
   padding: 28px;
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 24px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(245, 240, 255, 0.88));
+  background: linear-gradient(135deg, rgba(255, 250, 245, 0.94), rgba(239, 246, 255, 0.9), rgba(253, 230, 138, 0.2));
   box-shadow: 0 25px 70px rgba(70, 40, 120, 0.16);
   backdrop-filter: blur(18px);
   position: relative;
@@ -727,7 +731,7 @@ h3 {
   padding: 30px;
   border: 1px solid rgba(139, 92, 246, 0.16);
   border-radius: 24px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(249, 243, 255, 0.94));
+  background: linear-gradient(135deg, rgba(255, 250, 245, 0.97), rgba(245, 243, 255, 0.95), rgba(236, 253, 245, 0.92));
   box-shadow: var(--shadow);
 }
 
