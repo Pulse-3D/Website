@@ -16,6 +16,39 @@
   --shadow-soft: 0 18px 38px rgba(68, 59, 117, 0.12);
 }
 
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes textShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@keyframes floatGlow {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-14px) scale(1.04);
+    opacity: 1;
+  }
+}
+
 * {
   box-sizing: border-box;
 }
@@ -25,8 +58,36 @@ html {
 }
 
 body {
-
+  position: relative;
+  min-height: 100vh;
+  margin: 0;
+  background: linear-gradient(135deg, #fff7ed 0%, #fdf2f8 16%, #eef2ff 45%, #ecfeff 72%, #fff7ed 100%);
+  background-size: 400% 400%;
+  color: var(--ink);
   background-attachment: fixed;
+  animation: gradientShift 16s ease infinite;
+}
+
+body::before {
+  position: fixed;
+  inset: -10%;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(59, 130, 246, 0.22), transparent 29%),
+    radial-gradient(circle at 85% 18%, rgba(255, 107, 92, 0.2), transparent 24%),
+    radial-gradient(circle at 82% 80%, rgba(20, 184, 166, 0.19), transparent 26%),
+    radial-gradient(circle at 18% 82%, rgba(139, 92, 246, 0.18), transparent 28%);
+  filter: blur(34px);
+  animation: floatGlow 10s ease-in-out infinite;
+  content: "";
+  z-index: -2;
+}
+
+body::after {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04));
+  content: "";
+  z-index: -1;
 }
 
 a {
@@ -207,6 +268,18 @@ h1 {
   letter-spacing: 0;
 }
 
+h1,
+h2,
+.page-hero .eyebrow,
+.hero .eyebrow {
+  background: linear-gradient(90deg, var(--coral), var(--accent), var(--accent-2), var(--blue));
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: textShimmer 6s linear infinite;
+}
+
 h2 {
   margin-bottom: 16px;
   font-size: clamp(2rem, 4.8vw, 3.4rem);
@@ -259,9 +332,11 @@ h3 {
 }
 
 .button.primary {
-  background: linear-gradient(135deg, var(--coral), var(--accent));
+  background: linear-gradient(135deg, var(--coral), var(--accent), var(--accent-2));
+  background-size: 180% 100%;
   color: #ffffff;
   box-shadow: 0 16px 36px rgba(139, 92, 246, 0.24);
+  animation: gradientShift 8s ease infinite;
 }
 
 .button.secondary {
@@ -473,6 +548,13 @@ h3 {
   font-weight: 800;
 }
 
+.copy-status,
+.hero-text,
+.auth-card .hero-text {
+  color: var(--muted);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.65);
+}
+
 .contact-section .copy-status {
   color: #f3c46d;
 }
@@ -585,10 +667,22 @@ h3 {
   max-width: 560px;
   margin: 0 auto;
   padding: 28px;
-  border: 1px solid rgba(139, 92, 246, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 24px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(243, 239, 255, 0.92));
-  box-shadow: var(--shadow);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(245, 240, 255, 0.88));
+  box-shadow: 0 25px 70px rgba(70, 40, 120, 0.16);
+  backdrop-filter: blur(18px);
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-card::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.02), rgba(20, 184, 166, 0.16));
+  opacity: 0.8;
+  pointer-events: none;
+  content: "";
 }
 
 .auth-actions {
@@ -610,12 +704,19 @@ h3 {
   width: 100%;
   min-height: 52px;
   padding: 0 14px;
-  border: 1px solid var(--line);
-  border-radius: 8px;
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  border-radius: 12px;
   color: var(--ink);
   font: inherit;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.92);
   outline: none;
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.auth-card input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.16), 0 10px 24px rgba(20, 184, 166, 0.12);
+  transform: translateY(-1px);
 }
 
 .upload-panel {
