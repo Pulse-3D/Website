@@ -1,22 +1,22 @@
 :root {
-  --bg: #fff8f2;
-  --surface: rgba(255, 255, 255, 0.92);
-  --surface-soft: rgba(255, 255, 255, 0.84);
-  --ink: #1f2430;
-  --muted: #596074;
-  --line: rgba(139, 92, 246, 0.16);
-  --blue: #3b82f6;
+  --bg: #fff7ed;
+  --surface: rgba(255, 255, 255, 0.95);
+  --surface-soft: rgba(255, 255, 255, 0.88);
+  --ink: #111827;
+  --muted: #5b6475;
+  --line: rgba(124, 58, 237, 0.2);
+  --blue: #2563eb;
   --blue-dark: #1d4ed8;
   --coral: #ff6b5c;
-  --mint: #34d399;
-  --gold: #ffbb4d;
-  --accent: #8b5cf6;
-  --accent-2: #14b8a6;
-  --rose: #f472b6;
-  --lime: #a3e635;
-  --cyan: #22d3ee;
-  --shadow: 0 30px 80px rgba(29, 78, 216, 0.16);
-  --shadow-soft: 0 18px 38px rgba(68, 59, 117, 0.12);
+  --mint: #2dd4bf;
+  --gold: #fbbf24;
+  --accent: #7c3aed;
+  --accent-2: #0f766e;
+  --rose: #ec4899;
+  --lime: #84cc16;
+  --cyan: #06b6d4;
+  --shadow: 0 30px 80px rgba(15, 23, 42, 0.18);
+  --shadow-soft: 0 18px 40px rgba(76, 29, 149, 0.14);
 }
 
 @keyframes gradientShift {
@@ -31,14 +31,14 @@
   }
 }
 
-@keyframes cosmicPulse {
+@keyframes ambientDrift {
   0%,
   100% {
-    transform: scale(1);
-    opacity: 0.7;
+    transform: translate3d(0, 0, 0);
+    opacity: 0.72;
   }
   50% {
-    transform: scale(1.06);
+    transform: translate3d(0, -10px, 0);
     opacity: 1;
   }
 }
@@ -70,30 +70,31 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
   position: relative;
   min-height: 100vh;
   margin: 0;
-  background: linear-gradient(135deg, #040816 0%, #0f172a 24%, #1e1b4b 48%, #312e81 72%, #7c3aed 100%);
-  background-size: 400% 400%;
+  background: linear-gradient(135deg, #060816 0%, #111827 20%, #312e81 48%, #7c3aed 74%, #ec4899 100%);
+  background-size: 240% 240%;
   color: var(--ink);
-  background-attachment: fixed;
-  animation: gradientShift 16s ease infinite, cosmicPulse 3s ease-in-out infinite;
+  background-attachment: scroll;
+  animation: gradientShift 16s ease infinite;
 }
 
 body::before {
   position: fixed;
   inset: -10%;
   background:
-    radial-gradient(circle at 15% 20%, rgba(56, 189, 248, 0.35), transparent 30%),
+    radial-gradient(circle at 15% 20%, rgba(6, 182, 212, 0.34), transparent 30%),
     radial-gradient(circle at 85% 18%, rgba(236, 72, 153, 0.28), transparent 24%),
-    radial-gradient(circle at 82% 80%, rgba(168, 85, 247, 0.28), transparent 26%),
+    radial-gradient(circle at 82% 80%, rgba(124, 58, 237, 0.3), transparent 26%),
     radial-gradient(circle at 18% 82%, rgba(34, 211, 238, 0.24), transparent 28%),
-    radial-gradient(circle at 50% 50%, rgba(125, 211, 252, 0.18), transparent 32%);
-  filter: blur(38px);
-  animation: floatGlow 8s ease-in-out infinite;
+    radial-gradient(circle at 50% 50%, rgba(255, 107, 92, 0.2), transparent 30%);
+  filter: blur(42px);
+  animation: ambientDrift 10s ease-in-out infinite;
   content: "";
   z-index: -2;
 }
@@ -101,7 +102,7 @@ body::before {
 body::after {
   position: fixed;
   inset: 0;
-  background: linear-gradient(120deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.03));
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04));
   content: "";
   z-index: -1;
 }
@@ -407,11 +408,11 @@ h3 {
 .hero-visual {
   position: relative;
   min-height: 420px;
-  border: 1px solid rgba(139, 92, 246, 0.2);
+  border: 1px solid rgba(124, 58, 237, 0.24);
   border-radius: 28px;
   overflow: hidden;
-  background: linear-gradient(135deg, #fff8ef 0%, #f6efff 48%, #edfdf9 100%);
-  box-shadow: var(--shadow);
+  background: linear-gradient(135deg, #fff7ed 0%, #f5ebff 45%, #e6fdf8 100%);
+  box-shadow: 0 34px 90px rgba(30, 27, 75, 0.2);
 }
 
 .hero-visual::before {
@@ -495,10 +496,10 @@ h3 {
 .card {
   min-height: 190px;
   padding: 26px;
-  border: 1px solid rgba(139, 92, 246, 0.16);
+  border: 1px solid rgba(124, 58, 237, 0.18);
   border-radius: 20px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(248, 240, 255, 0.9));
-  box-shadow: var(--shadow-soft);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(244, 241, 255, 0.94));
+  box-shadow: 0 20px 44px rgba(76, 29, 149, 0.12);
   transition:
     border-color 180ms ease,
     transform 180ms ease,
@@ -531,10 +532,10 @@ h3 {
 
 .service-list li {
   padding: 16px 18px;
-  border: 1px solid rgba(139, 92, 246, 0.16);
+  border: 1px solid rgba(124, 58, 237, 0.18);
   border-radius: 16px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(242, 247, 255, 0.9));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(240, 245, 255, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 12px 30px rgba(76, 29, 149, 0.08);
 }
 
 .contact-section {
@@ -814,10 +815,10 @@ h3 {
   gap: 4px;
   min-height: 160px;
   padding: 24px;
-  border: 1px solid rgba(139, 92, 246, 0.16);
+  border: 1px solid rgba(124, 58, 237, 0.18);
   border-radius: 20px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(245, 239, 255, 0.9));
-  box-shadow: var(--shadow-soft);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(245, 239, 255, 0.94));
+  box-shadow: 0 20px 42px rgba(76, 29, 149, 0.12);
   transition:
     border-color 180ms ease,
     transform 180ms ease,
