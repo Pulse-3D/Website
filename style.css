@@ -81,7 +81,6 @@ body {
   background-size: 240% 240%;
   color: var(--ink);
   background-attachment: scroll;
-  animation: gradientShift 16s ease infinite;
 }
 
 body::before {
@@ -94,7 +93,6 @@ body::before {
     radial-gradient(circle at 18% 82%, rgba(34, 211, 238, 0.24), transparent 28%),
     radial-gradient(circle at 50% 50%, rgba(255, 107, 92, 0.2), transparent 30%);
   filter: blur(42px);
-  animation: ambientDrift 10s ease-in-out infinite;
   content: "";
   z-index: -2;
 }
@@ -294,7 +292,6 @@ h2,
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: textShimmer 6s linear infinite;
 }
 
 h2 {
@@ -353,7 +350,6 @@ h3 {
   background-size: 180% 100%;
   color: #ffffff;
   box-shadow: 0 16px 36px rgba(139, 92, 246, 0.24);
-  animation: gradientShift 8s ease infinite;
 }
 
 .button.secondary {
