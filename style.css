@@ -353,10 +353,10 @@ h3 {
 }
 
 .button.secondary {
-  background: linear-gradient(135deg, var(--coral), var(--rose), var(--accent), var(--accent-2), var(--cyan));
-  background-size: 180% 100%;
-  color: #ffffff;
-  box-shadow: 0 16px 36px rgba(139, 92, 246, 0.24);
+  border-color: rgba(139, 92, 246, 0.16);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 241, 255, 0.95));
+  color: var(--ink);
+  box-shadow: 0 10px 25px rgba(60, 40, 120, 0.08);
 }
 
 .button.text-button {
